@@ -1,23 +1,39 @@
-pipeline {
-    agent any
-    
-    stages {
-        stage('Run HTTP Server') {
-            steps {
-                script {
-                    // Stop existing HTTP server if it's running
-                    sh 'pkill -f "python3 -m http.server" || true'
+pipeline{
 
-                    // Clone git submodule
-                    sh 'git submodule update --init --recursive'
+	agent any
 
-                    // Start a simple HTTP server
-                    sh 'python3 -m http.server 2556 --bind 0.0.0.0 --cgi &'
+	environment {
+		DOCKERHUB_CREDENTIALS=credentials('docker_id')
+	}
 
-                    // Sleep for a few seconds to allow the server to start
-                    sleep(time: 10, unit: 'SECONDS')
-                }
-            }
-        }
-    }
+	stages {
+
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t kaxhif045/terminal:latest .'
+			}
+		}
+
+		stage('Login') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push') {
+
+			steps {
+				sh 'docker push kaxhif045/terminal:latest'
+			}
+		}
+	}
+
+	post {
+		always {
+			sh 'docker logout'
+		}
+	}
+
 }
