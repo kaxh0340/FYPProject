@@ -1,4 +1,5 @@
 node {
+     
      def app 
      stage('clone repository') {
       checkout scm  
@@ -11,7 +12,7 @@ node {
    
 
     stage('Push Image'){
-       docker.withRegistry('https://registry.hub.docker.com', 'git_id') {            
+       docker.withRegistry('docker_id', 'git_id') {            
        app.push("${env.BUILD_NUMBER}")            
        app.push("latest")   
    }
