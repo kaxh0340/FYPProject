@@ -11,37 +11,36 @@ pipeline {
         git 'https://github.com/kaxh0340/FYPProject.git'
       }
     }
-
     stage('Building image') {
-      steps {
+      steps{
         script {
-          dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
         }
       }
     }
 
-    stage('Test Mkdocs') {
-      agent {
-        docker { image "${registry}:${BUILD_NUMBER}" }
-      }
-      
-    }
+    stage('Test Mkdocs' ) {
+                agent {
+                docker { image 'kaxhif045/terminal:$BUILD_NUMBER' }
+            }
+            steps {
+                sh 'mkdocs --version'
+            }
+        }
+
 
     stage('Deploy Image') {
-      steps {
+      steps{
         script {
-          docker.withRegistry('', registryCredential) {
+          docker.withRegistry( '', registryCredential ) {
             dockerImage.push()
           }
         }
       }
     }
-
     stage('Remove Unused docker image') {
-      steps {
-        script {
-          sh "docker rmi ${registry}:${BUILD_NUMBER}"
-        }
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
       }
     }
   }
