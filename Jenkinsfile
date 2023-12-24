@@ -24,11 +24,7 @@ pipeline {
       agent {
         docker { image "${registry}:${BUILD_NUMBER}" }
       }
-      steps {
-        script {
-          // Add steps for testing Mkdocs inside the Docker container
-        }
-      }
+      
     }
 
     stage('Deploy Image') {
