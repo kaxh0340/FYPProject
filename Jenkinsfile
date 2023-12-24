@@ -8,8 +8,17 @@ node {
     }
      // Example Docker login step in Jenkins pipeline
      stage('Docker Login') {
-         withCredentials([usernamePassword(credentialsId: 'docker_id', usernameVariable: 'dockerhub', passwordVariable: 'dockerhub')]) {
-             sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+        /**
+                     * login to docker for private repository
+                     * create credentials in jenkins page.
+                     **/
+                     withCredentials([usernamePassword(credentialsId: 'docker-login-creds', passwordVariable: 'password', usernameVariable: 'username')]){
+                         sh '''
+                            echo "${password} | docker login -u ${username} --password-stdin"
+                         '''
+                         def app = docker.build("docker-image")
+                         app.push("latest")
+                     
     }
 }
 
