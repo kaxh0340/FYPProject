@@ -25,7 +25,9 @@ pipeline {
         docker { image "${registry}:${BUILD_NUMBER}" }
       }
       steps {
-        // Add steps for testing Mkdocs inside the Docker container
+        script {
+          // Add steps for testing Mkdocs inside the Docker container
+        }
       }
     }
 
@@ -41,7 +43,9 @@ pipeline {
 
     stage('Remove Unused docker image') {
       steps {
-        sh "docker rmi ${registry}:${BUILD_NUMBER}"
+        script {
+          sh "docker rmi ${registry}:${BUILD_NUMBER}"
+        }
       }
     }
   }
