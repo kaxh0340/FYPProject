@@ -8,13 +8,7 @@ node {
     }
     
 
-    stage('Test Image') {
-    app.inside {
-        sh 'pwd'
-        sh 'ls -la'
-        sh 'echo "TEST PASSED"'
-         }
-     }
+   
 
     stage('Push Image'){
        docker.withRegistry('https://registry.hub.docker.com', 'git') {            
